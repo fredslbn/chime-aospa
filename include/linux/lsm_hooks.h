@@ -2028,6 +2028,15 @@ struct security_hook_heads {
 	struct hlist_head perf_event_read;
 	struct hlist_head perf_event_write;
 #endif
+	#define LSM_HOOK(RET, DEFAULT, NAME, ...) RET (*NAME)(__VA_ARGS__);
+	#include "lsm_hook_defs.h"
+	#undef LSM_HOOK
+};
+
+struct security_hook_heads {
+	#define LSM_HOOK(RET, DEFAULT, NAME, ...) struct hlist_head NAME;
+	#include "lsm_hook_defs.h"
+	#undef LSM_HOOK
 } __randomize_layout;
 
 /*
@@ -2040,6 +2049,24 @@ struct security_hook_list {
 	union security_list_options	hook;
 	char				*lsm;
 } __randomize_layout;
+
+/*
+ * Security blob size or offset data.
+ */
+struct lsm_blob_sizes {
+	int	lbs_cred;
+	int	lbs_file;
+	int	lbs_inode;
+	int	lbs_ipc;
+	int	lbs_msg_msg;
+	int	lbs_task;
+};
+
+/*
+ * LSM_RET_VOID is used as the default value in LSM_HOOK definitions for void
+ * LSM hooks (in include/linux/lsm_hook_defs.h).
+ */
+#define LSM_RET_VOID ((void) 0)
 
 /*
  * Initializing a security_hook_list structure takes
