@@ -82,3 +82,18 @@ BPF_MAP_TYPE(BPF_MAP_TYPE_XSKMAP, xsk_map_ops)
 BPF_MAP_TYPE(BPF_MAP_TYPE_REUSEPORT_SOCKARRAY, reuseport_array_ops)
 #endif
 #endif
+<<<<<<< HEAD
+=======
+BPF_MAP_TYPE(BPF_MAP_TYPE_QUEUE, queue_map_ops)
+BPF_MAP_TYPE(BPF_MAP_TYPE_STACK, stack_map_ops)
+#if defined(CONFIG_BPF_JIT)
+BPF_MAP_TYPE(BPF_MAP_TYPE_STRUCT_OPS, bpf_struct_ops_map_ops)
+#endif
+
+BPF_LINK_TYPE(BPF_LINK_TYPE_RAW_TRACEPOINT, raw_tracepoint)
+BPF_LINK_TYPE(BPF_LINK_TYPE_TRACING, tracing)
+#ifdef CONFIG_CGROUP_BPF
+BPF_LINK_TYPE(BPF_LINK_TYPE_CGROUP, cgroup)
+#endif
+BPF_LINK_TYPE(BPF_LINK_TYPE_ITER, iter)
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')

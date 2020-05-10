@@ -27,6 +27,14 @@ struct bpf_map;
 struct sock;
 struct seq_file;
 struct btf_type;
+<<<<<<< HEAD
+=======
+struct exception_table_entry;
+struct seq_operations;
+
+extern struct idr btf_idr;
+extern spinlock_t btf_idr_lock;
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 
 /* map is generic key/value storage optionally accesible by eBPF programs */
 struct bpf_map_ops {
@@ -224,6 +232,12 @@ enum bpf_reg_type {
 	PTR_TO_TCP_SOCK,	 /* reg points to struct tcp_sock */
 	PTR_TO_TCP_SOCK_OR_NULL, /* reg points to struct tcp_sock or NULL */
 	PTR_TO_TP_BUFFER,	 /* reg points to a writable raw tp's buffer */
+<<<<<<< HEAD
+=======
+	PTR_TO_XDP_SOCK,	 /* reg points to struct xdp_sock */
+	PTR_TO_BTF_ID,		 /* reg points to kernel struct */
+	PTR_TO_BTF_ID_OR_NULL,	 /* reg points to kernel struct or NULL */
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 };
 
 /* The information passed from prog-specific *_is_valid_access
@@ -407,6 +421,11 @@ struct bpf_prog_aux {
 	u32 func_cnt;
 	bool offload_requested;
 	bool attach_btf_trace; /* true if attaching to BTF-enabled raw tp */
+<<<<<<< HEAD
+=======
+	bool func_proto_unreliable;
+	bool btf_id_or_null_non0_off;
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 	enum bpf_tramp_prog_type trampoline_prog_type;
 	struct bpf_trampoline *trampoline;
 	struct hlist_node tramp_hlist;
@@ -551,6 +570,7 @@ DECLARE_PER_CPU(int, bpf_prog_active);
 
 extern const struct file_operations bpf_map_fops;
 extern const struct file_operations bpf_prog_fops;
+extern const struct file_operations bpf_iter_fops;
 
 #define BPF_PROG_TYPE(_id, _name) \
 	extern const struct bpf_prog_ops _name ## _prog_ops; \
@@ -590,6 +610,19 @@ void bpf_map_uncharge_memlock(struct bpf_map *map, u32 pages);
 void *bpf_map_area_alloc(size_t size, int numa_node);
 void bpf_map_area_free(void *base);
 void bpf_map_init_from_attr(struct bpf_map *map, union bpf_attr *attr);
+<<<<<<< HEAD
+=======
+int  generic_map_lookup_batch(struct bpf_map *map,
+			      const union bpf_attr *attr,
+			      union bpf_attr __user *uattr);
+int  generic_map_update_batch(struct bpf_map *map,
+			      const union bpf_attr *attr,
+			      union bpf_attr __user *uattr);
+int  generic_map_delete_batch(struct bpf_map *map,
+			      const union bpf_attr *attr,
+			      union bpf_attr __user *uattr);
+struct bpf_map *bpf_map_get_curr_or_next(u32 *id);
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 
 extern int sysctl_unprivileged_bpf_disabled;
 
@@ -598,6 +631,37 @@ int bpf_prog_new_fd(struct bpf_prog *prog);
 
 int bpf_obj_pin_user(u32 ufd, const char __user *pathname);
 int bpf_obj_get_user(const char __user *pathname, int flags);
+
+#define BPF_ITER_FUNC_PREFIX "__bpf_iter__"
+#define DEFINE_BPF_ITER_FUNC(target, args...)			\
+	extern int __bpf_iter__ ## target(args);		\
+	int __init __bpf_iter__ ## target(args) { return 0; }
+
+typedef int (*bpf_iter_init_seq_priv_t)(void *private_data);
+typedef void (*bpf_iter_fini_seq_priv_t)(void *private_data);
+
+struct bpf_iter_reg {
+	const char *target;
+	const struct seq_operations *seq_ops;
+	bpf_iter_init_seq_priv_t init_seq_private;
+	bpf_iter_fini_seq_priv_t fini_seq_private;
+	u32 seq_priv_size;
+};
+
+struct bpf_iter_meta {
+	__bpf_md_ptr(struct seq_file *, seq);
+	u64 session_id;
+	u64 seq_num;
+};
+
+int bpf_iter_reg_target(struct bpf_iter_reg *reg_info);
+void bpf_iter_unreg_target(const char *target);
+bool bpf_iter_prog_supported(struct bpf_prog *prog);
+int bpf_iter_link_attach(const union bpf_attr *attr, struct bpf_prog *prog);
+int bpf_iter_new_fd(struct bpf_link *link);
+bool bpf_link_is_iter(struct bpf_link *link);
+struct bpf_prog *bpf_iter_get_info(struct bpf_iter_meta *meta, bool in_stop);
+int bpf_iter_run_prog(struct bpf_prog *prog, void *ctx);
 
 int bpf_percpu_hash_copy(struct bpf_map *map, void *key, void *value);
 int bpf_percpu_array_copy(struct bpf_map *map, void *key, void *value);

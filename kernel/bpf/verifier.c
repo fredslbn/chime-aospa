@@ -251,6 +251,86 @@ static bool type_is_pkt_pointer(enum bpf_reg_type type)
 	       type == PTR_TO_PACKET_META;
 }
 
+<<<<<<< HEAD
+=======
+static bool type_is_sk_pointer(enum bpf_reg_type type)
+{
+	return type == PTR_TO_SOCKET ||
+		type == PTR_TO_SOCK_COMMON ||
+		type == PTR_TO_TCP_SOCK ||
+		type == PTR_TO_XDP_SOCK;
+}
+
+static bool reg_type_may_be_null(enum bpf_reg_type type)
+{
+	return type == PTR_TO_MAP_VALUE_OR_NULL ||
+	       type == PTR_TO_SOCKET_OR_NULL ||
+	       type == PTR_TO_SOCK_COMMON_OR_NULL ||
+	       type == PTR_TO_TCP_SOCK_OR_NULL ||
+	       type == PTR_TO_BTF_ID_OR_NULL;
+}
+
+static bool reg_may_point_to_spin_lock(const struct bpf_reg_state *reg)
+{
+	return reg->type == PTR_TO_MAP_VALUE &&
+		map_value_has_spin_lock(reg->map_ptr);
+}
+
+static bool reg_type_may_be_refcounted_or_null(enum bpf_reg_type type)
+{
+	return type == PTR_TO_SOCKET ||
+		type == PTR_TO_SOCKET_OR_NULL ||
+		type == PTR_TO_TCP_SOCK ||
+		type == PTR_TO_TCP_SOCK_OR_NULL;
+}
+
+static bool arg_type_may_be_refcounted(enum bpf_arg_type type)
+{
+	return type == ARG_PTR_TO_SOCK_COMMON;
+}
+
+/* Determine whether the function releases some resources allocated by another
+ * function call. The first reference type argument will be assumed to be
+ * released by release_reference().
+ */
+static bool is_release_function(enum bpf_func_id func_id)
+{
+	return func_id == BPF_FUNC_sk_release;
+}
+
+static bool may_be_acquire_function(enum bpf_func_id func_id)
+{
+	return func_id == BPF_FUNC_sk_lookup_tcp ||
+		func_id == BPF_FUNC_sk_lookup_udp ||
+		func_id == BPF_FUNC_skc_lookup_tcp ||
+		func_id == BPF_FUNC_map_lookup_elem;
+}
+
+static bool is_acquire_function(enum bpf_func_id func_id,
+				const struct bpf_map *map)
+{
+	enum bpf_map_type map_type = map ? map->map_type : BPF_MAP_TYPE_UNSPEC;
+
+	if (func_id == BPF_FUNC_sk_lookup_tcp ||
+	    func_id == BPF_FUNC_sk_lookup_udp ||
+	    func_id == BPF_FUNC_skc_lookup_tcp)
+		return true;
+
+	if (func_id == BPF_FUNC_map_lookup_elem &&
+	    (map_type == BPF_MAP_TYPE_SOCKMAP ||
+	     map_type == BPF_MAP_TYPE_SOCKHASH))
+		return true;
+
+	return false;
+}
+
+static bool is_ptr_cast_function(enum bpf_func_id func_id)
+{
+	return func_id == BPF_FUNC_tcp_sock ||
+		func_id == BPF_FUNC_sk_fullsock;
+}
+
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 /* string representation of 'enum bpf_reg_type' */
 static const char * const reg_type_str[] = {
 	[NOT_INIT]		= "?",
@@ -271,6 +351,12 @@ static const char * const reg_type_str[] = {
 	[PTR_TO_TCP_SOCK]	= "tcp_sock",
 	[PTR_TO_TCP_SOCK_OR_NULL] = "tcp_sock_or_null",
 	[PTR_TO_TP_BUFFER]	= "tp_buffer",
+<<<<<<< HEAD
+=======
+	[PTR_TO_XDP_SOCK]	= "xdp_sock",
+	[PTR_TO_BTF_ID]		= "ptr_",
+	[PTR_TO_BTF_ID_OR_NULL]	= "ptr_or_null_",
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 };
 
 static char slot_type_char[] = {
@@ -323,6 +409,11 @@ static void print_verifier_state(struct bpf_verifier_env *env,
 			if (t == PTR_TO_STACK)
 				verbose(env, ",call_%d", func(env, reg)->callsite);
 		} else {
+<<<<<<< HEAD
+=======
+			if (t == PTR_TO_BTF_ID || t == PTR_TO_BTF_ID_OR_NULL)
+				verbose(env, "%s", kernel_type_name(reg->btf_id));
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 			verbose(env, "(id=%d", reg->id);
 			if (t != SCALAR_VALUE)
 				verbose(env, ",off=%d", reg->off);
@@ -1050,6 +1141,18 @@ static bool is_spillable_regtype(enum bpf_reg_type type)
 	case PTR_TO_PACKET_END:
 	case PTR_TO_FLOW_KEYS:
 	case CONST_PTR_TO_MAP:
+<<<<<<< HEAD
+=======
+	case PTR_TO_SOCKET:
+	case PTR_TO_SOCKET_OR_NULL:
+	case PTR_TO_SOCK_COMMON:
+	case PTR_TO_SOCK_COMMON_OR_NULL:
+	case PTR_TO_TCP_SOCK:
+	case PTR_TO_TCP_SOCK_OR_NULL:
+	case PTR_TO_XDP_SOCK:
+	case PTR_TO_BTF_ID:
+	case PTR_TO_BTF_ID_OR_NULL:
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 		return true;
 	default:
 		return false;
@@ -1479,7 +1582,14 @@ static int check_ctx_access(struct bpf_verifier_env *env, int insn_idx, int off,
 		 */
 		*reg_type = info.reg_type;
 
+<<<<<<< HEAD
 		env->insn_aux_data[insn_idx].ctx_field_size = info.ctx_field_size;
+=======
+		if (*reg_type == PTR_TO_BTF_ID || *reg_type == PTR_TO_BTF_ID_OR_NULL)
+			*btf_id = info.btf_id;
+		else
+			env->insn_aux_data[insn_idx].ctx_field_size = info.ctx_field_size;
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 		/* remember the offset of last byte accessed in ctx */
 		if (env->prog->aux->max_ctx_offset < off + size)
 			env->prog->aux->max_ctx_offset = off + size;
@@ -1854,6 +1964,21 @@ static int check_mem_access(struct bpf_verifier_env *env, int insn_idx, u32 regn
 			else
 				mark_reg_known_zero(env, regs,
 						    value_regno);
+<<<<<<< HEAD
+=======
+				if (reg_type_may_be_null(reg_type))
+					regs[value_regno].id = ++env->id_gen;
+				/* A load of ctx field could have different
+				 * actual load size with the one encoded in the
+				 * insn. When the dst is PTR, it is for sure not
+				 * a sub-register.
+				 */
+				regs[value_regno].subreg_def = DEF_NOT_SUBREG;
+				if (reg_type == PTR_TO_BTF_ID ||
+				    reg_type == PTR_TO_BTF_ID_OR_NULL)
+					regs[value_regno].btf_id = btf_id;
+			}
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 			regs[value_regno].type = reg_type;
 		}
 
@@ -2034,6 +2159,22 @@ static int check_stack_boundary(struct bpf_verifier_env *env, int regno,
 			*stype = STACK_MISC;
 			goto mark;
 		}
+<<<<<<< HEAD
+=======
+
+		if (state->stack[spi].slot_type[0] == STACK_SPILL &&
+		    state->stack[spi].spilled_ptr.type == PTR_TO_BTF_ID)
+			goto mark;
+
+		if (state->stack[spi].slot_type[0] == STACK_SPILL &&
+		    state->stack[spi].spilled_ptr.type == SCALAR_VALUE) {
+			__mark_reg_unknown(env, &state->stack[spi].spilled_ptr);
+			for (j = 0; j < BPF_REG_SIZE; j++)
+				state->stack[spi].slot_type[j] = STACK_MISC;
+			goto mark;
+		}
+
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 err:
 		verbose(env, "invalid indirect read from stack off %d+%d size %d\n",
 			off, i, access_size);
@@ -4098,11 +4239,36 @@ static void mark_map_reg(struct bpf_reg_state *regs, u32 regno, u32 id,
 		}
 		if (is_null) {
 			reg->type = SCALAR_VALUE;
+<<<<<<< HEAD
 		} else if (reg->map_ptr->inner_map_meta) {
 			reg->type = CONST_PTR_TO_MAP;
 			reg->map_ptr = reg->map_ptr->inner_map_meta;
 		} else {
 			reg->type = PTR_TO_MAP_VALUE;
+=======
+		} else if (reg->type == PTR_TO_MAP_VALUE_OR_NULL) {
+			const struct bpf_map *map = reg->map_ptr;
+
+			if (map->inner_map_meta) {
+				reg->type = CONST_PTR_TO_MAP;
+				reg->map_ptr = map->inner_map_meta;
+			} else if (map->map_type == BPF_MAP_TYPE_XSKMAP) {
+				reg->type = PTR_TO_XDP_SOCK;
+			} else if (map->map_type == BPF_MAP_TYPE_SOCKMAP ||
+				   map->map_type == BPF_MAP_TYPE_SOCKHASH) {
+				reg->type = PTR_TO_SOCKET;
+			} else {
+				reg->type = PTR_TO_MAP_VALUE;
+			}
+		} else if (reg->type == PTR_TO_SOCKET_OR_NULL) {
+			reg->type = PTR_TO_SOCKET;
+		} else if (reg->type == PTR_TO_SOCK_COMMON_OR_NULL) {
+			reg->type = PTR_TO_SOCK_COMMON;
+		} else if (reg->type == PTR_TO_TCP_SOCK_OR_NULL) {
+			reg->type = PTR_TO_TCP_SOCK;
+		} else if (reg->type == PTR_TO_BTF_ID_OR_NULL) {
+			reg->type = PTR_TO_BTF_ID;
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 		}
 		/* We don't need id from this point onwards anymore, thus we
 		 * should better reset it, so that state pruning has chances
@@ -4525,6 +4691,10 @@ static int check_return_code(struct bpf_verifier_env *env)
 	case BPF_PROG_TYPE_SOCK_OPS:
 	case BPF_PROG_TYPE_CGROUP_DEVICE:
 	case BPF_PROG_TYPE_CGROUP_SYSCTL:
+		break;
+	case BPF_PROG_TYPE_TRACING:
+		if (env->prog->expected_attach_type != BPF_TRACE_ITER)
+			return 0;
 		break;
 	default:
 		return 0;
@@ -5420,6 +5590,47 @@ next:
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+/* Return true if it's OK to have the same insn return a different type. */
+static bool reg_type_mismatch_ok(enum bpf_reg_type type)
+{
+	switch (type) {
+	case PTR_TO_CTX:
+	case PTR_TO_SOCKET:
+	case PTR_TO_SOCKET_OR_NULL:
+	case PTR_TO_SOCK_COMMON:
+	case PTR_TO_SOCK_COMMON_OR_NULL:
+	case PTR_TO_TCP_SOCK:
+	case PTR_TO_TCP_SOCK_OR_NULL:
+	case PTR_TO_XDP_SOCK:
+	case PTR_TO_BTF_ID:
+	case PTR_TO_BTF_ID_OR_NULL:
+		return false;
+	default:
+		return true;
+	}
+}
+
+/* If an instruction was previously used with particular pointer types, then we
+ * need to be careful to avoid cases such as the below, where it may be ok
+ * for one branch accessing the pointer, but not ok for the other branch:
+ *
+ * R1 = sock_ptr
+ * goto X;
+ * ...
+ * R1 = some_other_valid_ptr;
+ * goto X;
+ * ...
+ * R2 = *(u32 *)(R1 + 0);
+ */
+static bool reg_type_mismatch(enum bpf_reg_type src, enum bpf_reg_type prev)
+{
+	return src != prev && (!reg_type_mismatch_ok(src) ||
+			       !reg_type_mismatch_ok(prev));
+}
+
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 static int do_check(struct bpf_verifier_env *env)
 {
 	struct bpf_verifier_state *state;
@@ -6687,6 +6898,11 @@ static int check_attach_btf_id(struct bpf_verifier_env *env)
 	struct bpf_prog *prog = env->prog;
 	u32 btf_id = prog->aux->attach_btf_id;
 	const char prefix[] = "btf_trace_";
+<<<<<<< HEAD
+=======
+	struct btf_func_model fmodel;
+	int ret = 0, subprog = -1, i;
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 	struct bpf_trampoline *tr;
 	const struct btf_type *t;
 	const char *tname;
@@ -6746,6 +6962,23 @@ static int check_attach_btf_id(struct bpf_verifier_env *env)
 		prog->aux->attach_func_proto = t;
 		prog->aux->attach_btf_trace = true;
 		return 0;
+	case BPF_TRACE_ITER:
+		if (!btf_type_is_func(t)) {
+			verbose(env, "attach_btf_id %u is not a function\n",
+				btf_id);
+			return -EINVAL;
+		}
+		t = btf_type_by_id(btf, t->type);
+		if (!btf_type_is_func_proto(t))
+			return -EINVAL;
+		prog->aux->attach_func_name = tname;
+		prog->aux->attach_func_proto = t;
+		if (!bpf_iter_prog_supported(prog))
+			return -EINVAL;
+		prog->aux->btf_id_or_null_non0_off = true;
+		ret = btf_distill_func_proto(&env->log, btf, t,
+					     tname, &fmodel);
+		return ret;
 	default:
 		if (!prog_extension)
 			return -EINVAL;

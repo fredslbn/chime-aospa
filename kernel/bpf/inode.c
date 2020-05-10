@@ -339,6 +339,18 @@ static int bpf_mkmap(struct dentry *dentry, umode_t mode, void *arg)
 			     &bpffs_map_fops : &bpffs_obj_fops);
 }
 
+<<<<<<< HEAD
+=======
+static int bpf_mklink(struct dentry *dentry, umode_t mode, void *arg)
+{
+	struct bpf_link *link = arg;
+
+	return bpf_mkobj_ops(dentry, mode, arg, &bpf_link_iops,
+			     bpf_link_is_iter(link) ?
+			     &bpf_iter_fops : &bpffs_obj_fops);
+}
+
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 static struct dentry *
 bpf_lookup(struct inode *dir, struct dentry *dentry, unsigned flags)
 {

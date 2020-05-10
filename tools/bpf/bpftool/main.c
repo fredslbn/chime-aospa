@@ -85,7 +85,11 @@ static int do_help(int argc, char **argv)
 		"       %s batch file FILE\n"
 		"       %s version\n"
 		"\n"
+<<<<<<< HEAD
 		"       OBJECT := { prog | map | cgroup | perf }\n"
+=======
+		"       OBJECT := { prog | map | link | cgroup | perf | net | feature | btf | gen | struct_ops | iter }\n"
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 		"       " HELP_SPEC_OPTIONS "\n"
 		"",
 		bin_name, bin_name, bin_name);
@@ -215,6 +219,15 @@ static const struct cmd cmds[] = {
 	{ "map",	do_map },
 	{ "cgroup",	do_cgroup },
 	{ "perf",	do_perf },
+<<<<<<< HEAD
+=======
+	{ "net",	do_net },
+	{ "feature",	do_feature },
+	{ "btf",	do_btf },
+	{ "gen",	do_gen },
+	{ "struct_ops",	do_struct_ops },
+	{ "iter",	do_iter },
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 	{ "version",	do_version },
 	{ 0 }
 };

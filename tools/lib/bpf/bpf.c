@@ -400,6 +400,53 @@ int bpf_prog_detach2(int prog_fd, int target_fd, enum bpf_attach_type type)
 	return sys_bpf(BPF_PROG_DETACH, &attr, sizeof(attr));
 }
 
+<<<<<<< HEAD
+=======
+int bpf_link_create(int prog_fd, int target_fd,
+		    enum bpf_attach_type attach_type,
+		    const struct bpf_link_create_opts *opts)
+{
+	union bpf_attr attr;
+
+	if (!OPTS_VALID(opts, bpf_link_create_opts))
+		return -EINVAL;
+
+	memset(&attr, 0, sizeof(attr));
+	attr.link_create.prog_fd = prog_fd;
+	attr.link_create.target_fd = target_fd;
+	attr.link_create.attach_type = attach_type;
+
+	return sys_bpf(BPF_LINK_CREATE, &attr, sizeof(attr));
+}
+
+int bpf_link_update(int link_fd, int new_prog_fd,
+		    const struct bpf_link_update_opts *opts)
+{
+	union bpf_attr attr;
+
+	if (!OPTS_VALID(opts, bpf_link_update_opts))
+		return -EINVAL;
+
+	memset(&attr, 0, sizeof(attr));
+	attr.link_update.link_fd = link_fd;
+	attr.link_update.new_prog_fd = new_prog_fd;
+	attr.link_update.flags = OPTS_GET(opts, flags, 0);
+	attr.link_update.old_prog_fd = OPTS_GET(opts, old_prog_fd, 0);
+
+	return sys_bpf(BPF_LINK_UPDATE, &attr, sizeof(attr));
+}
+
+int bpf_iter_create(int link_fd)
+{
+	union bpf_attr attr;
+
+	memset(&attr, 0, sizeof(attr));
+	attr.iter_create.link_fd = link_fd;
+
+	return sys_bpf(BPF_ITER_CREATE, &attr, sizeof(attr));
+}
+
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 int bpf_prog_query(int target_fd, enum bpf_attach_type type, __u32 query_flags,
 		   __u32 *attach_flags, __u32 *prog_ids, __u32 *prog_cnt)
 {

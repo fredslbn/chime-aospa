@@ -181,6 +181,19 @@ LIBBPF_API struct bpf_link *
 bpf_program__attach_lsm(struct bpf_program *prog);
 struct bpf_map;
 LIBBPF_API struct bpf_link *bpf_map__attach_struct_ops(struct bpf_map *map);
+<<<<<<< HEAD
+=======
+
+struct bpf_iter_attach_opts {
+	size_t sz; /* size of this struct for forward/backward compatibility */
+};
+#define bpf_iter_attach_opts__last_field sz
+
+LIBBPF_API struct bpf_link *
+bpf_program__attach_iter(struct bpf_program *prog,
+			 const struct bpf_iter_attach_opts *opts);
+
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 struct bpf_insn;
 
 /*

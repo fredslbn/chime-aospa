@@ -136,6 +136,16 @@ int do_map(int argc, char **arg);
 int do_event_pipe(int argc, char **argv);
 int do_cgroup(int argc, char **arg);
 int do_perf(int argc, char **arg);
+<<<<<<< HEAD
+=======
+int do_net(int argc, char **arg);
+int do_tracelog(int argc, char **arg);
+int do_feature(int argc, char **argv);
+int do_btf(int argc, char **argv);
+int do_gen(int argc, char **argv);
+int do_struct_ops(int argc, char **argv);
+int do_iter(int argc, char **argv);
+>>>>>>> 180139dca8b3 (Merge branch 'bpf_iter')
 
 int prog_parse_fd(int *argc, char ***argv);
 int map_parse_fd(int *argc, char ***argv);
