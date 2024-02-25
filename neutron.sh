@@ -12,8 +12,8 @@ export KERNEL_DIR="$(pwd)"
 git submodule update --init --recursive
 
 # Device Name and Model
-export MODEL=POCO
-export DEVICE=chime
+MODEL=POCO
+DEVICE=chime
 
 # Kernel Defconfig
 export DEFCONFIG=vendor/bengal-perf_defconfig
