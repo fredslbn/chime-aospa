@@ -63,6 +63,8 @@ function cloneTC() {
 	export KERNEL_CLANG="clang"
     export KERNEL_CLANG_PATH="${KERNEL_DIR}/Neutron"
     export PATH="$KERNEL_CLANG_PATH/bin:$PATH"
+    
+    cd ..
    
    fi
 	
