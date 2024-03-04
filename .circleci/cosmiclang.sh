@@ -17,11 +17,11 @@ DEVICE=chime
 #VERSION=
 
 # Kernel Defconfig
-DEFCONFIG=vendor/bengal-perf_defconfig
+DEFCONFIG=bengal-perf_defconfig
 
 # Files
 IMAGE=$(pwd)/out/arch/arm64/boot/Image
-DTBO=$(pwd)/out/arch/arm64/boot/dtbo.img
+#DTBO=$(pwd)/out/arch/arm64/boot/dtbo.img
 #DTB=$(pwd)/out/arch/arm64/boot/dts/mediatek
 
 # Verbose Build
@@ -37,7 +37,7 @@ DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 TANGGAL=$(date +"%F%S")
 
 # Specify Final Zip Name
-ZIPNAME="SUPER.KERNEL-CHIME-(cosmic-clang)-$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M").zip"
+ZIPNAME="SUPER.KERNEL.CHIME-(cosmic-clang)-$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M").zip"
 
 ##----------------------------------------------------------##
 # Specify compiler.
@@ -148,7 +148,7 @@ START=$(date +"%s")
 function zipping() {
 	# Copy Files To AnyKernel3 Zip
 	cp $IMAGE AnyKernel3
-	cp $DTBO AnyKernel3
+	# cp $DTBO AnyKernel3
 	# find $DTB -name "*.dtb" -exec cat {} + > AnyKernel3/dtb
 	
 	# Zipping and Push Kernel

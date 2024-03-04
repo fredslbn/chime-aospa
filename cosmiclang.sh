@@ -17,11 +17,11 @@ MODEL=Xiaomi
 DEVICE=chime
 
 # Kernel Defconfig
-export DEFCONFIG=vendor/bengal-perf_defconfig
+export DEFCONFIG=bengal-perf_defconfig
 
 # Files
 export IMAGE=$(pwd)/out/arch/arm64/boot/Image
-export DTBO=$(pwd)/out/arch/arm64/boot/dtbo.img
+#export DTBO=$(pwd)/out/arch/arm64/boot/dtbo.img
 #DTB=$(pwd)/out/arch/arm64/boot/dts/mediatek
 
 # Date and Time
@@ -29,7 +29,7 @@ export DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
 export TANGGAL=$(date +"%F%S")
 
 # Specify Final Zip Name
-export ZIPNAME="SUPER.KERNEL-CHIME-(cosmic-clang)-$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M").zip"
+export ZIPNAME="SUPER.KERNEL.CHIME-(cosmic-clang)-$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M").zip"
 
 ##----------------------------------------------------------##
 # Specify compiler.
@@ -116,7 +116,7 @@ START=$(date +"%s")
 	       #LLVM=1 \
 	       #LLVM_IAS=1 \
 	       AR=llvm-ar \
-	       AS=llvm-as \
+	       #AS=llvm-as \
 	       NM=llvm-nm \
 	       OBJCOPY=llvm-objcopy \
 	       OBJDUMP=llvm-objdump \
@@ -132,7 +132,7 @@ START=$(date +"%s")
 function zipping() {
 	# Copy Files To AnyKernel3 Zip
 	cp $IMAGE AnyKernel3
-	cp $DTBO AnyKernel3
+	# cp $DTBO AnyKernel3
 	# find $DTB -name "*.dtb" -exec cat {} + > AnyKernel3/dtb
 	
 	# Zipping and Push Kernel
