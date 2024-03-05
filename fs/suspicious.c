@@ -17,6 +17,7 @@
 static const char* const suspicious_paths[] = {
 	"/storage/emulated/0/TWRP",
 	"/storage/emulated/0/Fox",
+	"/data/data/com.diwa.legacy",
 	"/system/lib/libzygisk.so",
 	"/system/lib64/libzygisk.so",
 	"/dev/zygisk",
