@@ -6,30 +6,40 @@
 
 ##----------------------------------------------------------##
 # Specify Kernel Directory
-export KERNEL_DIR="$(pwd)"
+KERNEL_DIR="$(pwd)"
+
+git submodule update --init --recursive --remote
 
 ##----------------------------------------------------------##
-
-git submodule update --init --recursive
-
 # Device Name and Model
 MODEL=Xiaomi
 DEVICE=chime
 
+# Kernel Version Code
+#VERSION=
+
 # Kernel Defconfig
-export DEFCONFIG=bengal-perf_defconfig
+DEFCONFIG=bengal-perf_defconfig
 
 # Files
-export IMAGE=$(pwd)/out/arch/arm64/boot/Image
-#export DTBO=$(pwd)/out/arch/arm64/boot/dtbo.img
+IMAGE=$(pwd)/out/arch/arm64/boot/Image
+#DTBO=$(pwd)/out/arch/arm64/boot/dtbo.img
 #DTB=$(pwd)/out/arch/arm64/boot/dts/mediatek
 
+# Verbose Build
+VERBOSE=0
+
+# Kernel Version
+#KERVER=$(make kernelversion)
+
+#COMMIT_HEAD=$(git log --oneline -1)
+
 # Date and Time
-export DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
-export TANGGAL=$(date +"%F%S")
+DATE=$(TZ=Asia/Jakarta date +"%Y%m%d-%T")
+TANGGAL=$(date +"%F%S")
 
 # Specify Final Zip Name
-export ZIPNAME="SUPER.KERNEL.CHIME-(cosmic-clang)-$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M").zip"
+ZIPNAME="SUPER.KERNEL.CHIME-(cosmic-clang)-$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M").zip"
 
 ##----------------------------------------------------------##
 # Specify compiler.
@@ -96,6 +106,14 @@ function exports() {
 	
 	}
         
+##----------------------------------------------------------------##
+# Telegram Bot Integration
+##----------------------------------------------------------------##
+
+# Export Configs
+
+# Speed up build process
+MAKE="./makeparallel"
 
 ##----------------------------------------------------------##
 # Compilation
@@ -116,7 +134,7 @@ START=$(date +"%s")
 	       #LLVM=1 \
 	       #LLVM_IAS=1 \
 	       AR=llvm-ar \
-	       #AS=llvm-as \
+	       AS=llvm-as \
 	       NM=llvm-nm \
 	       OBJCOPY=llvm-objcopy \
 	       OBJDUMP=llvm-objdump \
