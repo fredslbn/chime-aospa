@@ -23,7 +23,7 @@ DEFCONFIG=bengal-perf_defconfig
 
 # Files
 IMAGE=$(pwd)/out/arch/arm64/boot/Image
-#DTBO=$(pwd)/out/arch/arm64/boot/dtbo.img
+DTBO=$(pwd)/out/arch/arm64/boot/dtbo.img
 #DTB=$(pwd)/out/arch/arm64/boot/dts/mediatek
 
 # Verbose Build
@@ -160,7 +160,7 @@ START=$(date +"%s")
            #LLVM=1 \
            #LLVM_IAS=1 \
            AR=llvm-ar \
-	       #AS=llvm-as \
+	       AS=llvm-as \
 	       NM=llvm-nm \
 	       OBJCOPY=llvm-objcopy \
 	       OBJDUMP=llvm-objdump \
@@ -176,7 +176,7 @@ START=$(date +"%s")
 function zipping() {
 	# Copy Files To AnyKernel3 Zip
 	cp $IMAGE AnyKernel3
-	# cp $DTBO AnyKernel3
+	cp $DTBO AnyKernel3
 	# find $DTB -name "*.dtb" -exec cat {} + > AnyKernel3/dtb
 	
 	# Zipping and Push Kernel
