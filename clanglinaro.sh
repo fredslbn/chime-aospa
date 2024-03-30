@@ -8,7 +8,7 @@
 # Specify Kernel Directory
 KERNEL_DIR="$(pwd)"
 
-git submodule update --init --recursive --remote
+# git submodule update --init --recursive --remote
 
 ##----------------------------------------------------------##
 # Device Name and Model
@@ -40,7 +40,6 @@ TANGGAL=$(date +"%F%S")
 
 # Specify Final Zip Name
 ZIPNAME="SUPER.KERNEL.CHIME-(clang-linaro)-$(TZ=Asia/Jakarta date +"%Y%m%d-%H%M").zip"
-FINAL_ZIP=${ZIPNAME}-${DEVICE}-${TANGGAL}.zip
 
 ##----------------------------------------------------------##
 # Specify compiler.
