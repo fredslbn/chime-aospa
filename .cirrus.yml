@@ -8,4 +8,5 @@ task:
       memory: 32G
       
   setup_script:
-    - apt update && apt upgrade -y
+    - ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime && date
+    - curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
