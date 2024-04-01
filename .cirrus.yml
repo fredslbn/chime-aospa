@@ -10,3 +10,6 @@ task:
   setup_script:
     - ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime && date
     - curl -LSs "https://raw.githubusercontent.com/fredslbn/KernelSU/main/kernel/setup.sh" | bash -s main
+
+  Build_script:
+      - bash clanglinaro.sh
