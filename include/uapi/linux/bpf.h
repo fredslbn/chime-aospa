@@ -173,12 +173,9 @@ enum bpf_attach_type {
 	BPF_CGROUP_UDP4_SENDMSG,
 	BPF_CGROUP_UDP6_SENDMSG,
 	BPF_LIRC_MODE2,
-<<<<<<< HEAD
 	BPF_CGROUP_UDP4_RECVMSG = 19,
 	BPF_CGROUP_UDP6_RECVMSG,
-=======
 	BPF_FLOW_DISSECTOR,
->>>>>>> d58e468b1112 (flow_dissector: implements flow dissector BPF hook)
 	__MAX_BPF_ATTACH_TYPE
 };
 
